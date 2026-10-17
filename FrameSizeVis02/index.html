@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    @font-face { font-family: 'System'; src: local('Helvetica Neue'); }
+    body { margin: 0; background: oklch(0.97 0.004 90); }
+    input[type=number]::-webkit-inner-spin-button { opacity: 1; }
+  </style>
+</helmet>
+<div style="min-height:100vh; display:flex; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; color:oklch(0.22 0.01 90);">
+
+  <div style="width:300px; flex-shrink:0; background:oklch(0.99 0.002 90); border-right:1px solid oklch(0.88 0.006 90); padding:28px 24px; display:flex; flex-direction:column; gap:22px;">
+    <div>
+      <div style="font-size:20px; font-weight:600; letter-spacing:-0.01em;">Frame Size Calculator</div>
+      <div style="font-size:13px; color:oklch(0.42 0.01 90); margin-top:4px;">Enter your dimensions to see the finished frame size.</div>
+    </div>
+
+    <div>
+      <span style="display:block; font-size:12.5px; font-weight:600; color:oklch(0.4 0.01 90); margin-bottom:6px;">Start from</span>
+      <div style="display:flex; border-radius:8px; overflow:hidden; border:1px solid oklch(0.85 0.008 90);">
+        <button onClick="{{ setModeFrame }}" aria-pressed="{{ isFrameModeVal }}" style="flex:1; border:none; padding:8px 0; font-size:13px; font-family:inherit; font-weight:600; cursor:pointer; background:{{ modeFrameBg }}; color:{{ modeFrameColor }};">Frame Size</button>
+        <button onClick="{{ setModeImage }}" aria-pressed="{{ isImageMode }}" style="flex:1; border:none; padding:8px 0; font-size:13px; font-family:inherit; font-weight:600; cursor:pointer; background:{{ modeImageBg }}; color:{{ modeImageColor }};">Image Size</button>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <sc-for list="{{ fields }}" as="f" hint-placeholder-count="5">
+        <label style="display:flex; flex-direction:column; gap:6px;">
+          <span style="font-size:12.5px; font-weight:600; color:oklch(0.4 0.01 90);">
+            {{ f.label }}
+          </span>
+          <div style="position:relative;">
+            <input type="number" value="{{ f.value }}" step="0.125" min="0" onChange="{{ f.onChange }}" style="width:100%; box-sizing:border-box; padding:9px 30px 9px 12px; border-radius:8px; border:1px solid oklch(0.85 0.008 90); font-size:14.5px; font-family:inherit; color:inherit; background:white;">
+            <span style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:13px; color:oklch(0.4 0.01 90);">in</span>
+          </div>
+        </label>
+      </sc-for>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <sc-for list="{{ colorFields }}" as="cf" hint-placeholder-count="2">
+        <label style="display:flex; flex-direction:column; gap:6px;">
+          <span style="font-size:12.5px; font-weight:600; color:oklch(0.4 0.01 90);">{{ cf.label }}</span>
+          <div style="position:relative; display:flex; align-items:center; gap:8px;">
+            <span style="width:32px; height:32px; border-radius:8px; border:1px solid oklch(0.85 0.008 90); background:{{ cf.value }}; flex-shrink:0;"></span>
+            <input type="text" value="{{ cf.value }}" onChange="{{ cf.onChange }}"
+              style="flex:1; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid oklch(0.85 0.008 90); font-size:14.5px; font-family:inherit; color:inherit; background:white; text-transform:uppercase;">
+          </div>
+        </label>
+      </sc-for>
+    </div>
+
+    <div style="height:1px; background:oklch(0.9 0.006 90);"></div>
+
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="background:oklch(0.95 0.03 250); border-radius:10px; padding:14px 16px;">
+        <div style="font-size:11.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:oklch(0.4 0.12 250);">Finished Frame Size</div>
+        <div style="font-size:22px; font-weight:600; margin-top:4px; color:oklch(0.28 0.1 250);">{{ frameHText }}" H × {{ frameWText }}" W</div>
+      </div>
+      <div style="background:oklch(0.96 0.03 350); border-radius:10px; padding:14px 16px;">
+        <div style="font-size:11.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:oklch(0.4 0.15 350);">Image Size</div>
+        <div style="font-size:22px; font-weight:600; margin-top:4px; color:oklch(0.32 0.13 350);">{{ imageHText }}" H × {{ imageWText }}" W</div>
+      </div>
+      <div style="background:oklch(0.95 0.03 300); border-radius:10px; padding:14px 16px;">
+        <div style="font-size:11.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:oklch(0.4 0.12 300);">Visible Mat Size</div>
+        <div style="font-size:22px; font-weight:600; margin-top:4px; color:oklch(0.3 0.11 300);">{{ visMatHText }}" H × {{ visMatWText }}" W</div>
+      </div>
+      <div style="background:oklch(0.95 0.04 150); border-radius:10px; padding:14px 16px;">
+        <div style="font-size:11.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:oklch(0.38 0.1 150);">Mat / Glass Size</div>
+        <div style="font-size:22px; font-weight:600; margin-top:4px; color:oklch(0.28 0.09 150);">{{ matGlassHText }}" H × {{ matGlassWText }}" W</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:24px;">
+   <div style="position:relative; width:100%; max-width:1100px; aspect-ratio:1000/760;">
+    <svg viewBox="0 0 1000 760" style="width:100%; height:100%;" role="img" aria-label="{{ diagramAriaLabel }}">
+      <rect x="{{ frameRect.x }}" y="{{ frameRect.y }}" width="{{ frameRect.w }}" height="{{ frameRect.h }}" fill="{{ frameColorVal }}"></rect>
+      <rect x="{{ sightRect.x }}" y="{{ sightRect.y }}" width="{{ sightRect.w }}" height="{{ sightRect.h }}" fill="{{ matColorVal }}"></rect>
+      <rect x="{{ imageRect.x }}" y="{{ imageRect.y }}" width="{{ imageRect.w }}" height="{{ imageRect.h }}" fill="oklch(0.55 0.22 350)"></rect>
+    </svg>
+   </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    mode: 'frame',
+    dim1W: 30.75,
+    dim1H: 20.75,
+    mat: 3,
+    moulding: 1.625,
+    rabbet: 0.25,
+    frameColor: '#000000',
+    matColor: '#ffffff',
+  };
+
+  simplifyRatio(w, h) {
+    const gcd = (a, b) => (b < 1 ? a : gcd(b, a % b));
+    const scale = 10000;
+    let a = Math.round(w * scale), b = Math.round(h * scale);
+    const g = gcd(a, b) || 1;
+    return Math.round(a / g) + ' : ' + Math.round(b / g);
+  }
+
+  fmt(n) {
+    const r = Math.round(n * 1000) / 1000;
+    return (Math.round(r * 100) / 100).toString();
+  }
+
+  renderVals() {
+    const s = this.state;
+    const dim1W = Math.max(0.1, +s.dim1W || 0.1);
+    const dim1H = Math.max(0.1, +s.dim1H || 0.1);
+    const mat = Math.max(0, +s.mat || 0);
+    const moulding = Math.max(0.05, +s.moulding || 0.05);
+    const rabbet = Math.max(0, +s.rabbet || 0);
+    const isFrameMode = s.mode === 'frame';
+
+    let imageW, imageH, frameW, frameH;
+    if (isFrameMode) {
+      frameW = dim1W;
+      frameH = dim1H;
+      imageW = Math.max(0.1, frameW - 2 * mat - 2 * moulding);
+      imageH = Math.max(0.1, frameH - 2 * mat - 2 * moulding);
+    } else {
+      imageW = dim1W;
+      imageH = dim1H;
+      frameW = imageW + 2 * mat + 2 * moulding;
+      frameH = imageH + 2 * mat + 2 * moulding;
+    }
+    const matGlassW = imageW + 2 * mat + 2 * rabbet;
+    const matGlassH = imageH + 2 * mat + 2 * rabbet;
+
+    const set = (key) => (e) => this.setState({ [key]: e.target.value === '' ? '' : +e.target.value });
+    const setColor = (key) => (e) => this.setState({ [key]: e.target.value });
+
+    const dim1Label = isFrameMode ? 'Framed' : 'Image';
+    const fields = [
+      { label: dim1Label + ' Height', value: s.dim1H, color: 'oklch(0.55 0.22 350)', onChange: set('dim1H') },
+      { label: dim1Label + ' Width', value: s.dim1W, color: 'oklch(0.55 0.22 350)', onChange: set('dim1W') },
+      { label: 'Mat Width / Reveal', value: s.mat, color: 'oklch(0.55 0.14 300)', onChange: set('mat') },
+      { label: 'Frame (Moulding) Width', value: s.moulding, color: 'oklch(0.55 0.13 220)', onChange: set('moulding') },
+      { label: 'Rabbet Width', value: s.rabbet, color: 'oklch(0.55 0.14 150)', onChange: set('rabbet') },
+    ];
+
+    const colorFields = [
+      { label: 'Frame Color', value: s.frameColor, onChange: setColor('frameColor') },
+      { label: 'Mat Color', value: s.matColor, onChange: setColor('matColor') },
+    ];
+
+    // --- geometry ---
+    const leftM = 175, rightM = 210, topM = 140, bottomM = 110;
+    const availW = 1000 - leftM - rightM;
+    const availH = 760 - topM - bottomM;
+    const scale = Math.min(availW / frameW, availH / frameH);
+    const drawW = frameW * scale, drawH = frameH * scale;
+    const left = leftM + (availW - drawW) / 2;
+    const top = topM + (availH - drawH) / 2;
+    const right = left + drawW;
+    const bottom = top + drawH;
+    const cx = (left + right) / 2, cy = (top + bottom) / 2;
+
+    const mPx = moulding * scale, matPx = mat * scale, rPx = rabbet * scale;
+    const iwPx = imageW * scale, ihPx = imageH * scale;
+
+    const sLeft = left + mPx, sRight = right - mPx, sTop = top + mPx, sBottom = bottom - mPx;
+    const iLeft = cx - iwPx / 2, iRight = cx + iwPx / 2, iTop = cy - ihPx / 2, iBottom = cy + ihPx / 2;
+    const mgWpx = (imageW + 2 * mat + 2 * rabbet) * scale, mgHpx = (imageH + 2 * mat + 2 * rabbet) * scale;
+    const mgLeft = cx - mgWpx / 2, mgRight = cx + mgWpx / 2, mgTop = cy - mgHpx / 2, mgBottom = cy + mgHpx / 2;
+
+    const BLUE = 'oklch(0.42 0.15 250)';
+    const PINK = 'oklch(0.45 0.2 350)';
+    const GREEN = 'oklch(0.42 0.14 150)';
+    const PURPLE = 'oklch(0.42 0.14 300)';
+    const TEAL = 'oklch(0.42 0.13 220)';
+
+    const segments = [];
+    const labels = [];
+
+    const hDim = (y, x1, x2, extYFrom, color, text1, text2, labelAbove = true) => {
+      segments.push({ x1, y1: extYFrom, x2: x1, y2: y - 6, color, width: 1 });
+      segments.push({ x1: x2, y1: extYFrom, x2, y2: y - 6, color, width: 1 });
+      segments.push({ x1, y1: y, x2, y2: y, color, width: 1.5 });
+      labels.push({ x: (x1 + x2) / 2, y: labelAbove ? y - 22 : y + 18, y2: labelAbove ? y - 7 : y + 33, anchor: 'middle', color, text1, text2, size1: 13, size2: 13 });
+    };
+    const hDimBottom = (y, x1, x2, extYFrom, color, text1, text2) => {
+      segments.push({ x1, y1: extYFrom, x2: x1, y2: y + 6, color, width: 1 });
+      segments.push({ x1: x2, y1: extYFrom, x2, y2: y + 6, color, width: 1 });
+      segments.push({ x1, y1: y, x2, y2: y, color, width: 1.5 });
+      labels.push({ x: (x1 + x2) / 2, y: y + 20, y2: y + 35, anchor: 'middle', color, text1, text2, size1: 13, size2: 13 });
+    };
+    const vDim = (x, y1, y2, extXFrom, color, text1, text2, labelRight = true) => {
+      segments.push({ x1: extXFrom, y1, x2: labelRight ? x + 6 : x - 6, y2: y1, color, width: 1 });
+      segments.push({ x1: extXFrom, y1: y2, x2: labelRight ? x + 6 : x - 6, y2, color, width: 1 });
+      segments.push({ x1: x, y1, x2: x, y2, color, width: 1.5 });
+      const midY = (y1 + y2) / 2;
+      labels.push({ x: labelRight ? x + 12 : x - 12, y: midY - 4, y2: midY + 12, anchor: labelRight ? 'start' : 'end', color, text1, text2, size1: 13, size2: 13 });
+    };
+
+    // top dimensions
+    hDim(top - 95, left, right, top, BLUE, 'Framed Width', this.fmt(frameW) + '"');
+    hDim(top - 48, iLeft, iRight, iTop, PINK, 'Image Width', this.fmt(imageW) + '"');
+    // bottom dimension
+    hDimBottom(bottom + 65, mgLeft, mgRight, mgBottom, GREEN, 'Mat/Glass Width', this.fmt(matGlassW) + '"');
+
+    // right side dimensions
+    vDim(right + 155, top, bottom, right, BLUE, 'Framed Height', this.fmt(frameH) + '"');
+    vDim(right + 85, iTop, iBottom, iRight, PINK, 'Image Height', this.fmt(imageH) + '"');
+
+    // left side dimension
+    vDim(left - 85, mgTop, mgBottom, mgLeft, GREEN, 'Mat/Glass Height', this.fmt(matGlassH) + '"', false);
+
+    // corner leader callouts (right side, near top): frame/moulding width + mat width/reveal
+    const leaderTop1Y = top + 22;
+    const target1 = { x: (sRight + right) / 2, y: top + mPx * 0.5 };
+    segments.push({ x1: target1.x, y1: target1.y, x2: right + 20, y2: leaderTop1Y, color: TEAL, width: 1 });
+    labels.push({ x: right + 24, y: leaderTop1Y - 4, y2: leaderTop1Y + 12, anchor: 'start', color: TEAL, text1: 'Frame Width', text2: this.fmt(moulding) + '"', size1: 12.5, size2: 12.5 });
+
+    const leaderTop2Y = top + 62;
+    const target2 = { x: (iRight + sRight) / 2, y: iTop };
+    segments.push({ x1: target2.x, y1: target2.y, x2: right + 20, y2: leaderTop2Y, color: PURPLE, width: 1 });
+    labels.push({ x: right + 24, y: leaderTop2Y - 4, y2: leaderTop2Y + 12, anchor: 'start', color: PURPLE, text1: 'Mat Width/Reveal', text2: this.fmt(mat) + '"', size1: 12.5, size2: 12.5 });
+
+    // rabbet leader, left side near top
+    const leaderTop3Y = top + 22;
+    const target3 = { x: (mgLeft + sLeft) / 2, y: sTop };
+    segments.push({ x1: target3.x, y1: target3.y, x2: left - 20, y2: leaderTop3Y, color: GREEN, width: 1 });
+    labels.push({ x: left - 24, y: leaderTop3Y - 4, y2: leaderTop3Y + 12, anchor: 'end', color: GREEN, text1: 'Rabbet Width', text2: this.fmt(rabbet) + '"', size1: 12.5, size2: 12.5 });
+
+    return {
+      fields,
+      colorFields,
+      frameColorVal: s.frameColor || '#000000',
+      matColorVal: s.matColor || '#ffffff',
+      setModeImage: () => this.setState({ mode: 'image' }),
+      setModeFrame: () => this.setState({ mode: 'frame' }),
+      isImageMode: !isFrameMode,
+      isFrameModeVal: isFrameMode,
+      modeImageBg: isFrameMode ? 'white' : 'oklch(0.42 0.15 250)',
+      modeImageColor: isFrameMode ? 'oklch(0.4 0.01 90)' : 'white',
+      modeFrameBg: isFrameMode ? 'oklch(0.42 0.15 250)' : 'white',
+      modeFrameColor: isFrameMode ? 'white' : 'oklch(0.4 0.01 90)',
+      diagramAriaLabel: 'Diagram of a ' + this.fmt(frameW) + ' by ' + this.fmt(frameH) + ' inch frame with a ' + this.fmt(mat) + ' inch mat around a ' + this.fmt(imageW) + ' by ' + this.fmt(imageH) + ' inch image.',
+      frameWText: this.fmt(frameW), frameHText: this.fmt(frameH),
+      imageWText: this.fmt(imageW), imageHText: this.fmt(imageH),
+      matGlassWText: this.fmt(matGlassW), matGlassHText: this.fmt(matGlassH),
+      visMatWText: this.fmt(matGlassW - 2 * rabbet), visMatHText: this.fmt(matGlassH - 2 * rabbet),
+      frameRect: { x: left, y: top, w: drawW, h: drawH },
+      sightRect: { x: sLeft, y: sTop, w: sRight - sLeft, h: sBottom - sTop },
+      imageRect: { x: iLeft, y: iTop, w: iRight - iLeft, h: iBottom - iTop, cx: (iLeft + iRight) / 2, cy: (iTop + iBottom) / 2 },
+      imageRatioText: this.simplifyRatio(imageW, imageH),
+      imageRatioBox: {
+        leftPct: (iLeft / 1000) * 100,
+        topPct: (iTop / 760) * 100,
+        wPct: ((iRight - iLeft) / 1000) * 100,
+        hPct: ((iBottom - iTop) / 760) * 100,
+      },
+      matGlassRect: { x: mgLeft, y: mgTop, w: mgRight - mgLeft, h: mgBottom - mgTop },
+      segments,
+      labels,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
